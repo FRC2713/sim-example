@@ -1,7 +1,11 @@
 {
   "NetworkTables": {
+    "SmartDashboard": {
+      "open": true
+    },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/SmartDashboard/Mechanism2d": "Mechanism2d"
     },
     "windows": {
