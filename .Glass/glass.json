@@ -1,0 +1,19 @@
+{
+  "NetworkTables": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Mechanism2d": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Mechanism2d": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client",
+    "serverTeam": "localhost"
+  }
+}
