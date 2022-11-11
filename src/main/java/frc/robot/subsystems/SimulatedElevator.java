@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
@@ -16,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class SimulatedElevator extends SubsystemBase {
   private final ElevatorSim model =
       new ElevatorSim(
-          DCMotor.getNEO(4), // number of motors powering the elevator
+          DCMotor.getNEO(2), // number of motors powering the elevator
           1.0, // gear reduction from motors to elevator
           Units.lbsToKilograms(15), // weight of the elevator's carriage that moves up/down, in kg
           Units.inchesToMeters(
@@ -25,9 +24,6 @@ public class SimulatedElevator extends SubsystemBase {
           0, // minimum height of the elevator, in meters
           3 // maximum height of the elevator, in meters
           );
-  private final double kS = 3.9125;
-
-  private PIDController controller = new PIDController(1, 0, 0);
   private double targetHeightMeters = 0;
 
   // These 3 are for drawing an elevator visualization on Glass
@@ -39,22 +35,12 @@ public class SimulatedElevator extends SubsystemBase {
 
   public SimulatedElevator() {}
 
-  public void setTargetHeight(double targetHeightMeters) {
-    this.targetHeightMeters = targetHeightMeters;
-  }
-
   @Override
   public void periodic() {
     model.update(0.02);
 
     double ffOutput = 0;
-    if (model.getPositionMeters() < targetHeightMeters) {
-      ffOutput = kS;
-    }
-
-    double pidOutput = controller.calculate(model.getPositionMeters(), targetHeightMeters);
-
-    model.setInputVoltage(ffOutput + pidOutput);
+    double pidOutput = 0;
 
     RoboRioSim.setVInVoltage(
         BatterySim.calculateLoadedBatteryVoltage(12, 0.015, model.getCurrentDrawAmps()));
