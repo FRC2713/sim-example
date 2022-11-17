@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
@@ -15,9 +17,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class SimulatedElevator extends SubsystemBase {
   private final ElevatorSim model =
       new ElevatorSim(
-          DCMotor.getNEO(2), // number of motors powering the elevator
+          DCMotor.getNEO(3), // number of motors powering the elevator
           1.0, // gear reduction from motors to elevator
-          Units.lbsToKilograms(15), // weight of the elevator's carriage that moves up/down, in kg
+          Units.lbsToKilograms(5), // weight of the elevator's carriage that moves up/down, in kg
           Units.inchesToMeters(
               1), // diameter of the drum that winds the chain/rope to move the elevator, in
           // meters
@@ -25,6 +27,8 @@ public class SimulatedElevator extends SubsystemBase {
           3 // maximum height of the elevator, in meters
           );
   private double targetHeightMeters = 0;
+  private PIDController controller = new PIDController(1, 0, 0);
+  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(.86, 0);
 
   // These 3 are for drawing an elevator visualization on Glass
   // Don't modify!
@@ -35,12 +39,19 @@ public class SimulatedElevator extends SubsystemBase {
 
   public SimulatedElevator() {}
 
+  public void setTargetHeight(double height) {
+    targetHeightMeters = height;
+    controller.setSetpoint(height);
+  }
+
   @Override
   public void periodic() {
     model.update(0.02);
 
-    double ffOutput = 0;
-    double pidOutput = 0;
+    double ffOutput = feedforward.calculate(1);
+    double pidOutput = controller.calculate(model.getPositionMeters());
+
+    model.setInputVoltage(ffOutput + pidOutput);
 
     RoboRioSim.setVInVoltage(
         BatterySim.calculateLoadedBatteryVoltage(12, 0.015, model.getCurrentDrawAmps()));

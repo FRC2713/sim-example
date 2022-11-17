@@ -49,7 +49,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    elevator.setTargetHeight(0);
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -61,6 +63,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    elevator.setTargetHeight(2);
   }
 
   /** This function is called periodically during autonomous. */
